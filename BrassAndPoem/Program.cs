@@ -94,20 +94,31 @@ void DisplayAllProducts(List<Product> products, List<ProductType> productTypes)
 void DeleteProduct(List<Product> products, List<ProductType> productTypes)
 {
     DisplayAllProducts(products, productTypes);
-            Console.Write("Enter the name of the product to delete: ");
-            string name = Console.ReadLine();
 
-            var productToRemove = products.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            if (productToRemove != null)
-            {
-                products.Remove(productToRemove);
-                Console.WriteLine("Product deleted.");
-            }
-            else
-            {
-                Console.WriteLine("Product not found.");
-            };
+    Console.Write("Enter the number of the product to delete: ");
+    string input = Console.ReadLine();
+
+    try
+    {
+        int index = int.Parse(input) - 1; // Convert to zero-based index
+
+        if (index >= 0 && index < products.Count)
+        {
+            Product productToRemove = products[index]; // Get product by index
+            products.RemoveAt(index);
+            Console.WriteLine($"Product '{productToRemove.Name}' deleted.");
+        }
+        else
+        {
+            Console.WriteLine("Invalid product number. Please try again.");
+        }
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine("Invalid input. Please enter a valid number.");
+    }
 }
+
 
 void AddProduct(List<Product> products, List<ProductType> productTypes)
 {
@@ -143,43 +154,58 @@ void AddProduct(List<Product> products, List<ProductType> productTypes)
 void UpdateProduct(List<Product> products, List<ProductType> productTypes)
 {
     DisplayAllProducts(products, productTypes);
-            Console.Write("Enter the name of the product to update: ");
-            string name = Console.ReadLine();
+    Console.Write("Enter the number of the product to update: ");
+    string input = Console.ReadLine();
 
-            var productToUpdate = products.FirstOrDefault(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
-            if (productToUpdate != null)
+    try
+    {
+        int index = int.Parse(input) - 1; // Convert to zero-based index
+
+        if (index >= 0 && index < products.Count)
+        {
+            Product productToUpdate = products[index]; // Get product by index
+
+            Console.Write($"Enter new name for {productToUpdate.Name} (or press Enter to keep unchanged): ");
+            string newName = Console.ReadLine();
+            if (!string.IsNullOrEmpty(newName))
             {
-                Console.Write($"Enter new name for {productToUpdate.Name} (or press Enter to keep unchanged): ");
-                string newName = Console.ReadLine();
-                if (!string.IsNullOrEmpty(newName))
-                {
-                    productToUpdate.Name = newName;
-                }
-
-                Console.Write($"Enter new price for {productToUpdate.Price} (or press Enter to keep unchanged): ");
-                if (decimal.TryParse(Console.ReadLine(), out decimal newPrice))
-                {
-                    productToUpdate.Price = newPrice;
-                }
-
-                Console.WriteLine("Choose a new product type: ");
-                for (int i = 0; i < productTypes.Count; i++)
-                {
-                    Console.WriteLine($"{i + 1}. {productTypes[i].Title}");
-                }
-
-                Console.Write("Enter the product type number: ");
-                if (int.TryParse(Console.ReadLine(), out int newProductTypeId) && newProductTypeId > 0 && newProductTypeId <= productTypes.Count)
-                {
-                    productToUpdate.ProductTypeId = newProductTypeId;
-                    Console.WriteLine("Product updated.");
-                }
-                else
-                {
-                    Console.WriteLine("Invalid product type.");
-                }
+                productToUpdate.Name = newName;
             }
+
+            Console.Write($"Enter new price for {productToUpdate.Price} (or press Enter to keep unchanged): ");
+            if (decimal.TryParse(Console.ReadLine(), out decimal newPrice))
+            {
+                productToUpdate.Price = newPrice;
+            }
+
+            Console.WriteLine("Choose a new product type: ");
+            for (int i = 0; i < productTypes.Count; i++)
+            {
+                Console.WriteLine($"{i + 1}. {productTypes[i].Title}"); 
+            }
+
+            Console.Write("Enter the product type number: ");
+            if (int.TryParse(Console.ReadLine(), out int newProductTypeId) && newProductTypeId > 0 && newProductTypeId <= productTypes.Count)
+            {
+                productToUpdate.ProductTypeId = newProductTypeId;
+                Console.WriteLine("Product updated.");
+            }
+            else
+            {
+                Console.WriteLine("Invalid product type. No changes made.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("Invalid product number. Please try again.");
+        }
+    }
+    catch (FormatException)
+    {
+        Console.WriteLine("Invalid input. Please enter a valid number.");
+    }
 }
+
 
 // don't move or change this!
 public partial class Program { }
